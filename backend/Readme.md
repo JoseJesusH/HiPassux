@@ -169,6 +169,29 @@ def retrieve_all_users():
     """
     pass
 
+## Principios SOLID Aplicados
+
+En este proyecto, hemos aplicado varios principios SOLID para garantizar un diseño modular y mantenible:
+
+1. **Principio de Responsabilidad Única (SRP)**:
+   - **Controladores**: `user_controller.py` maneja solo las rutas relacionadas con usuarios, mientras que cada función en el controlador gestiona una responsabilidad específica (por ejemplo, `get_users` recupera usuarios, `register` maneja el registro de usuarios).
+   - **Servicios**: `user_service.py` contiene la lógica de negocio relacionada con usuarios, separándola de la lógica de enrutamiento del controlador.
+
+2. **Principio de Abierto/Cerrado (OCP)**:
+   - **Servicios Extensibles**: Al colocar la lógica de negocio en `UserService`, puedes extender el servicio para manejar funcionalidades adicionales sin modificar el código existente. Por ejemplo, podrías agregar nuevos métodos a `UserService` para operaciones adicionales de usuario.
+   - **Patrón Repositorio**: El patrón `UserRepository` permite extender o reemplazar el acceso a datos subyacente sin modificar el código del servicio o del controlador.
+
+3. **Principio de Sustitución de Liskov (LSP)**:
+   - **Herencia y Sustituibilidad**: El principio LSP se respeta siempre que cualquier subclase de la entidad `User` pueda ser utilizada en lugar de la entidad base `User` sin alterar la corrección de la aplicación. Si agregas diferentes tipos de usuarios o implementas diferentes repositorios, la aplicación debe seguir funcionando correctamente con estas variaciones.
+
+4. **Principio de Segregación de Interfaces (ISP)**:
+   - **Interfaces Granulares**: Las interfaces `UserRepository` y `UserService` están diseñadas para manejar responsabilidades específicas. Al usar estas interfaces enfocadas, la aplicación evita forzar a cualquier componente a depender de interfaces que no utiliza. Por ejemplo, la interfaz del repositorio puede incluir solo métodos relacionados con el acceso a datos de usuario.
+
+5. **Principio de Inversión de Dependencias (DIP)**:
+   - **Inyección de Dependencias**: Aunque no se muestra explícitamente en el código proporcionado, adherirse al DIP implica diseñar tus clases para que dependan de abstracciones en lugar de implementaciones concretas. Por ejemplo, `UserService` debería depender de una interfaz abstracta de repositorio en lugar de una implementación específica de `UserRepository`. Esto permite una prueba más fácil y flexibilidad al intercambiar implementacionecs.
+
+Estos principios ayudan a hacer que el código sea más modular, mantenible y flexible.
+
 # Refactored Code with SOLID Principles Applied
 1. User Retrieval Service:
 # app/domain/services/user_retrieval_service.py
