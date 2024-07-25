@@ -147,3 +147,111 @@ Las contribuciones son bienvenidas. Por favor, sigue los siguientes pasos para c
 ## Licencia
 
 Este proyecto está licenciado bajo la [Licencia MIT](LICENSE).
+
+## Clear Comments
+Before:
+# This function does something
+def do_something():
+    pass
+After:
+def initialize_database_connection():
+    """
+    Initialize the connection to the database using environment variables.
+    """
+    pass
+# Improved Function Names
+Before:def get_users():
+    pass
+After:
+def retrieve_all_users():
+    """
+    Retrieve all users from the database.
+    """
+    pass
+
+# Refactored Code with SOLID Principles Applied
+1. User Retrieval Service:
+# app/domain/services/user_retrieval_service.py
+from app.domain.repositories.user_repository import UserRepository
+
+class UserRetrievalService:
+    def __init__(self, user_repository: UserRepository):
+        self.user_repository = user_repository
+
+    def get_all_users(self):
+        return self.user_repository.get_all_users()
+
+2. User Creation Service:
+# app/domain/services/user_creation_service.py
+from app.domain.repositories.user_repository import UserRepository
+from app.domain.entities.user import User
+
+class UserCreationService:
+    def __init__(self, user_repository: UserRepository):
+        self.user_repository = user_repository
+
+    def create_user(self, username, first_name, last_name, birth_date, phone_number, gender, email, password):
+        new_user = User(
+            username=username,
+            first_name=first_name,
+            last_name=last_name,
+            birth_date=birth_date,
+            phone_number=phone_number,
+            gender=gender,
+            email=email,
+            password=password
+        )
+        self.user_repository.add_user(new_user)
+
+3. Updated User Controller:
+
+# app/controllers/user_controller.py
+from flask import Blueprint, render_template, request, redirect, url_for
+from app.domain.services.user_creation_service import UserCreationService
+from app.domain.services.user_retrieval_service import UserRetrievalService
+from app.domain.repositories.user_repository import UserRepository
+from datetime import datetime
+
+bp = Blueprint('user', __name__)
+
+user_repository = UserRepository()
+user_retrieval_service = UserRetrievalService(user_repository)
+user_creation_service = UserCreationService(user_repository)
+
+@bp.route('/users', methods=['GET'])
+def get_users():
+    users = user_retrieval_service.get_all_users()
+    return render_template('users.html', users=users)
+
+@bp.route('/register', methods=['GET', 'POST'])
+def register():
+    if request.method == 'POST':
+        try:
+            username = request.form['username']
+            first_name = request.form['first_name']
+            last_name = request.form['last_name']
+            birth_date = datetime.strptime(request.form['birth_date'], '%Y-%m-%d')
+            phone_number = request.form.get('phone_number')
+            gender = request.form.get('gender')
+            email = request.form['email']
+            password = request.form['password']
+
+            user_creation_service.create_user(
+                username=username,
+                first_name=first_name,
+                last_name=last_name,
+                birth_date=birth_date,
+                phone_number=phone_number,
+                gender=gender,
+                email=email,
+                password=password
+            )
+
+            return redirect(url_for('user.get_users'))
+
+        except Exception as e:
+            return render_template('register.html', error=f'Ocurrió un error: {e}')
+    
+    return render_template('register.html')
+
+
