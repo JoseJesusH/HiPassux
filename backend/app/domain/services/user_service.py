@@ -1,13 +1,18 @@
 from app.domain.repositories.user_repository import User,UserRepository
+class UserRetrievalInterface:
+    def get_all_users(self):
+        raise NotImplementedError
 
-class UserService:
+class UserCreationInterface:
+    def create_user(self, username, first_name, last_name, birth_date, phone_number, gender, email, password):
+        raise NotImplementedError
 
-    @staticmethod
-    def get_all_users():
+class UserRetrievalService(UserRetrievalInterface):
+    def get_all_users(self):
         return UserRepository.get_all_users()
 
-    @staticmethod
-    def create_user(username, first_name, last_name, birth_date, phone_number, gender, email, password):
+class UserCreationService(UserCreationInterface):
+    def create_user(self, username, first_name, last_name, birth_date, phone_number, gender, email, password):
         new_user = User(
             username=username,
             first_name=first_name,
