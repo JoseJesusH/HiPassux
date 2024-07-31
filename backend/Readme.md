@@ -489,11 +489,13 @@ Descripción: Utiliza funciones o métodos reutilizables que han sido probados y
 
 
 # En user_controller.py
+```python
 def validate_user_data(data):
     """Valida los datos del usuario."""
     if not data.get('username') or not data.get('email'):
         raise ValueError("Username y Email son obligatorios")
     return True
+```
 Uso en el Proyecto:
 En el método register() de user_controller.py, llama a validate_user_data() antes de procesar los datos del formulario.
 
@@ -502,6 +504,7 @@ Descripción: Maneja los errores y excepciones de manera robusta para evitar que
 
 
 # En user_controller.py
+```python
 try:
     UserService.create_user(
         username=username,
@@ -517,18 +520,13 @@ except ValueError as ve:
     return render_template('register.html', error=f'Ocurrió un error de valor: {ve}')
 except Exception as e:
     return render_template('register.html', error=f'Ocurrió un error inesperado: {e}')
-
+```
 Uso en el Proyecto:
 El bloque try-except en el método register() maneja errores durante la creación del usuario y proporciona un mensaje de error adecuado.
 
 # 1.3 Restful
 Descripción: Sigue los principios REST para estructurar las rutas de la API, haciendo que las operaciones sean consistentes y fácilmente comprensibles.
-
-Aplicación en el Proyecto:
-En user_api.py y post_api.py, las rutas están estructuradas siguiendo el estilo REST, utilizando métodos HTTP adecuados para cada operación (GET, POST, PUT, DELETE).
-
-
-# En user_api.py
+```python
 @user_api.route('/<int:user_id>', methods=['GET'])
 def get_user(user_id):
     """Obtiene un usuario por su ID."""
@@ -536,3 +534,17 @@ def get_user(user_id):
     if user:
         return jsonify(user.to_dict())
     return jsonify({'error': error_User}), 404
+Aplicación en el Proyecto:
+En user_api.py y post_api.py, las rutas están estructuradas siguiendo el estilo REST, utilizando métodos HTTP adecuados para cada operación (GET, POST, PUT, DELETE).
+```
+
+# En user_api.py
+```python
+@user_api.route('/<int:user_id>', methods=['GET'])
+def get_user(user_id):
+    """Obtiene un usuario por su ID."""
+    user = UserService.get_user_by_id(user_id)
+    if user:
+        return jsonify(user.to_dict())
+    return jsonify({'error': error_User}), 404
+```
